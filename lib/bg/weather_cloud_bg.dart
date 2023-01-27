@@ -1,10 +1,10 @@
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/image_utils.dart';
-import 'package:flutter_weather_bg_null_safety/utils/print_utils.dart';
-import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
+
+import '../utils/image_utils.dart';
+import '../utils/weather_type.dart';
+import 'weather_bg.dart';
 
 //// 专门负责绘制背景云层
 //// 会根据不同的天气类型，选择需要绘制的图片类型，并控制缩放、渐变、位移以及染色，最终显示在屏幕上
@@ -21,12 +21,12 @@ class _WeatherCloudBgState extends State<WeatherCloudBg> {
   List<ui.Image> _images = [];
 
   Future<void> fetchImages() async {
-    weatherPrint("开始获取云层图片");
+    //weatherprint("开始获取云层图片");
     var image1 = await ImageUtils.getImage('images/cloud.webp');
     var image2 = await ImageUtils.getImage('images/sun.webp');
     _images.add(image1);
     _images.add(image2);
-    weatherPrint("获取云层图片成功： ${_images.length}${widget.weatherType}");
+    //weatherprint("获取云层图片成功： ${_images.length}${widget.weatherType}");
     setState(() {});
   }
 
@@ -37,8 +37,8 @@ class _WeatherCloudBgState extends State<WeatherCloudBg> {
   }
 
   Widget _buildWidget() {
-    weatherPrint(
-        "获取云层图片成功： ${SizeInherited.of(context)?.size.width}${widget.weatherType}");
+    //weatherprint(
+    // "获取云层图片成功： ${SizeInherited.of(context)?.size.width}${widget.weatherType}")
 
     if (_images.isNotEmpty) {
       return CustomPaint(
@@ -67,7 +67,7 @@ class BgPainter extends CustomPainter {
   final width;
 
   BgPainter(this.images, this.weatherType, this.widthRatio, this.width) {
-    weatherPrint("获取云层图片成功paintpaint： ${widthRatio}===width==${width}");
+    //weatherprint("获取云层图片成功paintpaint： ${widthRatio}===width==${width}");
   }
 
   @override

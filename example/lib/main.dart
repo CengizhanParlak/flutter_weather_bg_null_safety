@@ -2,12 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/print_utils.dart';
 import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
-import 'package:flutter_weather_bg_example/anim_view.dart';
-import 'package:flutter_weather_bg_example/grid_view.dart';
-import 'package:flutter_weather_bg_example/list_view.dart';
-import 'package:flutter_weather_bg_example/page_view.dart';
+
+import 'anim_view.dart';
+import 'grid_view.dart';
+import 'list_view.dart';
+import 'page_view.dart';
 
 void main() {
   runApp(MyApp());
@@ -99,7 +99,7 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   onTap: () {
-                    weatherPrint("name: $routeName");
+                    //weatherprint("name: $routeName");
                     Navigator.of(context).pushNamed(routeName);
                   },
                 ),

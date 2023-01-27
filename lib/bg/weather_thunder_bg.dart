@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
 import 'package:flutter_weather_bg_null_safety/utils/image_utils.dart';
-import 'package:flutter_weather_bg_null_safety/utils/print_utils.dart';
 import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
 
 /// 雷暴动画层
@@ -26,7 +25,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
 
   /// 异步获取雷暴图片资源
   Future<void> fetchImages() async {
-    weatherPrint("开始获取雷暴图片");
+    //weatherprint("开始获取雷暴图片");
     var image1 = await ImageUtils.getImage('images/lightning0.webp');
     var image2 = await ImageUtils.getImage('images/lightning1.webp');
     var image3 = await ImageUtils.getImage('images/lightning2.webp');
@@ -37,7 +36,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
     _images.add(image3);
     _images.add(image4);
     _images.add(image5);
-    weatherPrint("获取雷暴图片成功： ${_images.length}");
+    //weatherprint("获取雷暴图片成功： ${_images.length}");
     _state = WeatherDataState.init;
     setState(() {});
   }

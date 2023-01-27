@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/print_utils.dart';
 import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
 
 /// 已宫格的形式展示多样的天气效果
@@ -70,7 +69,7 @@ class GridItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    weatherPrint("grid item size: ${MediaQuery.of(context).size}");
+    //weatherprint("grid item size: ${MediaQuery.of(context).size}");
     var radius = 20.0 - 2 * count;
     var margin = 10.0 - count;
     return Card(

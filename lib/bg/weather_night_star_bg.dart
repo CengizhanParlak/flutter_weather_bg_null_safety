@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
 import 'package:flutter_weather_bg_null_safety/flutter_weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/print_utils.dart';
 import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
 
 //// 晴晚&流星层
@@ -33,7 +32,7 @@ class _WeatherNightStarBgState extends State<WeatherNightStarBg>
     width = size?.width ?? double.infinity;
     height = size?.height ?? double.infinity;
     widthRatio = width / 392.0;
-    weatherPrint("开始准备星星参数");
+    //weatherprint("开始准备星星参数");
     _state = WeatherDataState.loading;
     initStarParams();
     setState(() {

@@ -2,10 +2,10 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/image_utils.dart';
-import 'package:flutter_weather_bg_null_safety/utils/print_utils.dart';
-import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
+
+import '../utils/image_utils.dart';
+import '../utils/weather_type.dart';
+import 'weather_bg.dart';
 
 //// 雨雪动画层
 class WeatherRainSnowBg extends StatefulWidget {
@@ -34,13 +34,13 @@ class _WeatherRainSnowBgState extends State<WeatherRainSnowBg>
 
   /// 异步获取雨雪的图片资源和初始化数据
   Future<void> fetchImages() async {
-    weatherPrint("开始获取雨雪图片");
+    //weatherprint("开始获取雨雪图片");
     var image1 = await ImageUtils.getImage('images/rain.webp');
     var image2 = await ImageUtils.getImage('images/snow.webp');
     _images.clear();
     _images.add(image1);
     _images.add(image2);
-    weatherPrint("获取雨雪图片成功： ${_images.length}");
+    //weatherprint("获取雨雪图片成功： ${_images.length}");
     _state = WeatherDataState.init;
     setState(() {});
   }
@@ -49,8 +49,8 @@ class _WeatherRainSnowBgState extends State<WeatherRainSnowBg>
   Future<void> initParams() async {
     _state = WeatherDataState.loading;
     if (widget.viewWidth != 0 && widget.viewHeight != 0 && _rainSnows.isEmpty) {
-      weatherPrint(
-          "开始雨参数初始化 ${_rainSnows.length}， weatherType: ${widget.weatherType}, isRainy: ${WeatherUtil.isRainy(widget.weatherType)}");
+      //weatherprint(
+      // "开始雨参数初始化 ${_rainSnows.length}， weatherType: ${widget.weatherType}, isRainy: ${WeatherUtil.isRainy(widget.weatherType)}")
       if (WeatherUtil.isSnowRain(widget.weatherType)) {
         if (widget.weatherType == WeatherType.lightRainy) {
           count = 70;
@@ -77,7 +77,7 @@ class _WeatherRainSnowBgState extends State<WeatherRainSnowBg>
           rainSnow.init(widthRatio, heightRatio);
           _rainSnows.add(rainSnow);
         }
-        weatherPrint("初始化雨参数成功 ${_rainSnows.length}");
+        //weatherprint("初始化雨参数成功 ${_rainSnows.length}");
       }
     }
     _controller.forward();
