@@ -9,25 +9,28 @@ import 'weather_bg.dart';
 //// 专门负责绘制背景云层
 //// 会根据不同的天气类型，选择需要绘制的图片类型，并控制缩放、渐变、位移以及染色，最终显示在屏幕上
 class WeatherCloudBg extends StatefulWidget {
-  final WeatherType weatherType;
-
   WeatherCloudBg({Key? key, required this.weatherType}) : super(key: key);
+  final WeatherType weatherType;
 
   @override
   _WeatherCloudBgState createState() => _WeatherCloudBgState();
 }
 
 class _WeatherCloudBgState extends State<WeatherCloudBg> {
-  List<ui.Image> _images = [];
+  final List<ui.Image> _images = [];
 
   Future<void> fetchImages() async {
     //weatherprint("开始获取云层图片");
-    var image1 = await ImageUtils.getImage('images/cloud.webp');
-    var image2 = await ImageUtils.getImage('images/sun.webp');
+    ui.Image image1 = await ImageUtils.getImage('images/cloud.webp');
+    ui.Image image2 = await ImageUtils.getImage('images/sun.webp');
     _images.add(image1);
     _images.add(image2);
     //weatherprint("获取云层图片成功： ${_images.length}${widget.weatherType}");
-    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -60,15 +63,14 @@ class _WeatherCloudBgState extends State<WeatherCloudBg> {
 }
 
 class BgPainter extends CustomPainter {
-  final _paint = Paint();
+  BgPainter(this.images, this.weatherType, this.widthRatio, this.width) {
+    //weatherprint("获取云层图片成功paintpaint： ${widthRatio}===width==${width}");
+  }
+  final ui.Paint _paint = Paint();
   final List<ui.Image> images;
   final WeatherType weatherType;
   final widthRatio;
   final width;
-
-  BgPainter(this.images, this.weatherType, this.widthRatio, this.width) {
-    //weatherprint("获取云层图片成功paintpaint： ${widthRatio}===width==${width}");
-  }
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -124,18 +126,19 @@ class BgPainter extends CustomPainter {
   void drawSunny(Canvas canvas, Size size) {
     ui.Image image = images[0];
     ui.Image image1 = images[1];
-    _paint.maskFilter = MaskFilter.blur(BlurStyle.normal, 40);
+    _paint.maskFilter = const MaskFilter.blur(BlurStyle.normal, 40);
     canvas.save();
-    final sunScale = 1.2 * widthRatio;
+    final double sunScale = 1.2 * widthRatio;
     canvas.scale(sunScale, sunScale);
-    var offset = Offset(width.toDouble() - image1.width.toDouble() * sunScale,
+    ui.Offset offset = Offset(
+        width.toDouble() - image1.width.toDouble() * sunScale,
         -image1.width.toDouble() / 2);
     canvas.drawImage(image1, offset, _paint);
     canvas.restore();
 
     canvas.save();
-    final scale = 0.6 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-100, -100);
+    final double scale = 0.6 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-100, -100);
     canvas.scale(scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.restore();
@@ -144,7 +147,7 @@ class BgPainter extends CustomPainter {
   void drawCloudy(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       1,
       0,
       0,
@@ -167,10 +170,10 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(0, -200);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(0, -200);
     ui.Offset offset2 = ui.Offset(-image.width / 2, -130);
-    ui.Offset offset3 = ui.Offset(100, 0);
+    ui.Offset offset3 = const ui.Offset(100, 0);
     canvas.scale(scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -182,7 +185,7 @@ class BgPainter extends CustomPainter {
   void drawCloudyNight(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.32,
       0,
       0,
@@ -205,10 +208,10 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(0, -200);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(0, -200);
     ui.Offset offset2 = ui.Offset(-image.width / 2, -130);
-    ui.Offset offset3 = ui.Offset(100, 0);
+    ui.Offset offset3 = const ui.Offset(100, 0);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -220,7 +223,7 @@ class BgPainter extends CustomPainter {
   void drawOvercast(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       1,
       0,
       0,
@@ -243,10 +246,10 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(0, -200);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(0, -200);
     ui.Offset offset2 = ui.Offset(-image.width / 2, -130);
-    ui.Offset offset3 = ui.Offset(100, 0);
+    ui.Offset offset3 = const ui.Offset(100, 0);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -258,7 +261,7 @@ class BgPainter extends CustomPainter {
   void drawLightRainy(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.45,
       0,
       0,
@@ -281,10 +284,10 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-380, -150);
-    ui.Offset offset2 = ui.Offset(0, -60);
-    ui.Offset offset3 = ui.Offset(0, 60);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-380, -150);
+    ui.Offset offset2 = const ui.Offset(0, -60);
+    ui.Offset offset3 = const ui.Offset(0, 60);
     canvas.scale(scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -296,7 +299,7 @@ class BgPainter extends CustomPainter {
   void drawHazy(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.67,
       0,
       0,
@@ -319,7 +322,7 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 2.0 * widthRatio;
+    final double scale = 2.0 * widthRatio;
     ui.Offset offset1 = ui.Offset(-image.width.toDouble() * 0.5, -200);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
@@ -330,7 +333,7 @@ class BgPainter extends CustomPainter {
   void drawFoggy(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.75,
       0,
       0,
@@ -353,7 +356,7 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 2.0 * widthRatio;
+    final double scale = 2.0 * widthRatio;
     ui.Offset offset1 = ui.Offset(-image.width.toDouble() * 0.5, -200);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
@@ -364,7 +367,7 @@ class BgPainter extends CustomPainter {
   void drawDusty(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.62,
       0,
       0,
@@ -387,7 +390,7 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 2.0 * widthRatio;
+    final double scale = 2.0 * widthRatio;
     ui.Offset offset1 = ui.Offset(-image.width.toDouble() * 0.5, -200);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
@@ -398,7 +401,7 @@ class BgPainter extends CustomPainter {
   void drawHeavyRainy(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.19,
       0,
       0,
@@ -421,10 +424,10 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-380, -150);
-    ui.Offset offset2 = ui.Offset(0, -60);
-    ui.Offset offset3 = ui.Offset(0, 60);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-380, -150);
+    ui.Offset offset2 = const ui.Offset(0, -60);
+    ui.Offset offset3 = const ui.Offset(0, 60);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -436,7 +439,7 @@ class BgPainter extends CustomPainter {
   void drawMiddleRainy(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.16,
       0,
       0,
@@ -459,10 +462,10 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-380, -150);
-    ui.Offset offset2 = ui.Offset(0, -60);
-    ui.Offset offset3 = ui.Offset(0, 60);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-380, -150);
+    ui.Offset offset2 = const ui.Offset(0, -60);
+    ui.Offset offset3 = const ui.Offset(0, 60);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -474,7 +477,7 @@ class BgPainter extends CustomPainter {
   void drawLightSnow(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.67,
       0,
       0,
@@ -497,9 +500,9 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-380, -100);
-    ui.Offset offset2 = ui.Offset(0, -170);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-380, -100);
+    ui.Offset offset2 = const ui.Offset(0, -170);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -510,7 +513,7 @@ class BgPainter extends CustomPainter {
   void drawMiddleSnow(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.7,
       0,
       0,
@@ -533,9 +536,9 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-380, -100);
-    ui.Offset offset2 = ui.Offset(0, -170);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-380, -100);
+    ui.Offset offset2 = const ui.Offset(0, -170);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);
@@ -546,7 +549,7 @@ class BgPainter extends CustomPainter {
   void drawHeavySnow(Canvas canvas, Size size) {
     ui.Image image = images[0];
     canvas.save();
-    const identity = ColorFilter.matrix(<double>[
+    const ui.ColorFilter identity = ColorFilter.matrix(<double>[
       0.74,
       0,
       0,
@@ -569,9 +572,9 @@ class BgPainter extends CustomPainter {
       0,
     ]);
     _paint.colorFilter = identity;
-    final scale = 0.8 * widthRatio;
-    ui.Offset offset1 = ui.Offset(-380, -100);
-    ui.Offset offset2 = ui.Offset(0, -170);
+    final double scale = 0.8 * widthRatio;
+    ui.Offset offset1 = const ui.Offset(-380, -100);
+    ui.Offset offset2 = const ui.Offset(0, -170);
     canvas.scale(scale, scale);
     canvas.drawImage(image, offset1, _paint);
     canvas.drawImage(image, offset2, _paint);

@@ -2,15 +2,15 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_bg_null_safety/bg/weather_bg.dart';
-import 'package:flutter_weather_bg_null_safety/utils/image_utils.dart';
-import 'package:flutter_weather_bg_null_safety/utils/weather_type.dart';
+
+import '../utils/image_utils.dart';
+import '../utils/weather_type.dart';
+import 'weather_bg.dart';
 
 /// 雷暴动画层
 class WeatherThunderBg extends StatefulWidget {
-  final WeatherType weatherType;
-
   WeatherThunderBg({Key? key, required this.weatherType}) : super(key: key);
+  final WeatherType weatherType;
 
   @override
   _WeatherCloudBgState createState() => _WeatherCloudBgState();
@@ -18,19 +18,19 @@ class WeatherThunderBg extends StatefulWidget {
 
 class _WeatherCloudBgState extends State<WeatherThunderBg>
     with SingleTickerProviderStateMixin {
-  List<ui.Image> _images = [];
+  final List<ui.Image> _images = [];
   late AnimationController _controller;
-  List<ThunderParams> _thunderParams = [];
+  final List<ThunderParams> _thunderParams = [];
   WeatherDataState? _state;
 
   /// 异步获取雷暴图片资源
   Future<void> fetchImages() async {
     //weatherprint("开始获取雷暴图片");
-    var image1 = await ImageUtils.getImage('images/lightning0.webp');
-    var image2 = await ImageUtils.getImage('images/lightning1.webp');
-    var image3 = await ImageUtils.getImage('images/lightning2.webp');
-    var image4 = await ImageUtils.getImage('images/lightning3.webp');
-    var image5 = await ImageUtils.getImage('images/lightning4.webp');
+    ui.Image image1 = await ImageUtils.getImage('images/lightning0.webp');
+    ui.Image image2 = await ImageUtils.getImage('images/lightning1.webp');
+    ui.Image image3 = await ImageUtils.getImage('images/lightning2.webp');
+    ui.Image image4 = await ImageUtils.getImage('images/lightning3.webp');
+    ui.Image image5 = await ImageUtils.getImage('images/lightning4.webp');
     _images.add(image1);
     _images.add(image2);
     _images.add(image3);
@@ -38,7 +38,11 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
     _images.add(image5);
     //weatherprint("获取雷暴图片成功： ${_images.length}");
     _state = WeatherDataState.init;
-    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((Duration timeStamp) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
@@ -51,11 +55,11 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
   // 这里用于初始化动画相关，将闪电三个作为一组循环播放展示
   void initAnim() {
     _controller =
-        AnimationController(duration: Duration(seconds: 3), vsync: this);
-    _controller.addStatusListener((status) {
+        AnimationController(duration: const Duration(seconds: 3), vsync: this);
+    _controller.addStatusListener((AnimationStatus status) {
       if (status == AnimationStatus.completed) {
         _controller.reset();
-        Future.delayed(Duration(milliseconds: 50)).then((value) {
+        Future.delayed(const Duration(milliseconds: 50)).then((value) {
           initThunderParams();
           _controller.forward();
         });
@@ -63,7 +67,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
     });
 
     // 构造第一个闪电的动画数据
-    var _animation = TweenSequence([
+    Animation<double> animation = TweenSequence([
       TweenSequenceItem(
           tween: Tween(begin: 0.0, end: 1.0)
               .chain(CurveTween(curve: Curves.easeIn)),
@@ -74,7 +78,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
           weight: 3),
     ]).animate(CurvedAnimation(
       parent: _controller,
-      curve: Interval(
+      curve: const Interval(
         0.0,
         0.3,
         curve: Curves.ease,
@@ -82,7 +86,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
     ));
 
     // 构造第二个闪电的动画数据
-    var _animation1 = TweenSequence([
+    Animation<double> animation1 = TweenSequence([
       TweenSequenceItem(
           tween: Tween(begin: 0.0, end: 1.0)
               .chain(CurveTween(curve: Curves.easeIn)),
@@ -93,7 +97,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
           weight: 3),
     ]).animate(CurvedAnimation(
       parent: _controller,
-      curve: Interval(
+      curve: const Interval(
         0.2,
         0.5,
         curve: Curves.ease,
@@ -101,7 +105,7 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
     ));
 
     // 构造第三个闪电的动画数据
-    var _animation2 = TweenSequence([
+    Animation<double> animation2 = TweenSequence([
       TweenSequenceItem(
           tween: Tween(begin: 0.0, end: 1.0)
               .chain(CurveTween(curve: Curves.easeIn)),
@@ -112,30 +116,30 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
           weight: 3),
     ]).animate(CurvedAnimation(
       parent: _controller,
-      curve: Interval(
+      curve: const Interval(
         0.6,
         0.9,
         curve: Curves.ease,
       ),
     ));
 
-    _animation.addListener(() {
+    animation.addListener(() {
       if (_thunderParams.isNotEmpty) {
-        _thunderParams[0].alpha = _animation.value;
+        _thunderParams[0].alpha = animation.value;
       }
       setState(() {});
     });
 
-    _animation1.addListener(() {
+    animation1.addListener(() {
       if (_thunderParams.isNotEmpty) {
-        _thunderParams[1].alpha = _animation1.value;
+        _thunderParams[1].alpha = animation1.value;
       }
       setState(() {});
     });
 
-    _animation2.addListener(() {
+    animation2.addListener(() {
       if (_thunderParams.isNotEmpty) {
-        _thunderParams[2].alpha = _animation2.value;
+        _thunderParams[2].alpha = animation2.value;
       }
       setState(() {});
     });
@@ -164,13 +168,13 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
   void initThunderParams() {
     _state = WeatherDataState.loading;
     _thunderParams.clear();
-    var size = SizeInherited.of(context)?.size;
-    var width = size?.width ?? double.infinity;
-    var height = size?.height ?? double.infinity;
-    var widthRatio = width / 392.0;
+    ui.Size? size = SizeInherited.of(context)?.size;
+    double width = size?.width ?? double.infinity;
+    double height = size?.height ?? double.infinity;
+    double widthRatio = width / 392.0;
     // 配置三个闪电信息
-    for (var i = 0; i < 3; i++) {
-      var param = ThunderParams(
+    for (int i = 0; i < 3; i++) {
+      ThunderParams param = ThunderParams(
           _images[Random().nextInt(5)], width, height, widthRatio);
       param.reset();
       _thunderParams.add(param);
@@ -191,15 +195,14 @@ class _WeatherCloudBgState extends State<WeatherThunderBg>
 }
 
 class ThunderPainter extends CustomPainter {
-  var _paint = Paint();
-  final List<ThunderParams> thunderParams;
-
   ThunderPainter(this.thunderParams);
+  ui.Paint _paint = Paint();
+  final List<ThunderParams> thunderParams;
 
   @override
   void paint(Canvas canvas, Size size) {
     if (thunderParams.isNotEmpty) {
-      for (var param in thunderParams) {
+      for (ThunderParams param in thunderParams) {
         drawThunder(param, canvas, size);
       }
     }
@@ -208,7 +211,7 @@ class ThunderPainter extends CustomPainter {
   /// 这里主要负责绘制雷电
   void drawThunder(ThunderParams params, Canvas canvas, Size size) {
     canvas.save();
-    var identity = ColorFilter.matrix(<double>[
+    ui.ColorFilter identity = ColorFilter.matrix(<double>[
       1,
       0,
       0,
@@ -243,6 +246,7 @@ class ThunderPainter extends CustomPainter {
 }
 
 class ThunderParams {
+  ThunderParams(this.image, this.width, this.height, this.widthRatio);
   late ui.Image image; // 配置闪电的图片资源
   late double x; // 图片展示的 x 坐标
   late double y; // 图片展示的 y 坐标
@@ -250,8 +254,6 @@ class ThunderParams {
   int get imgWidth => image.width; // 雷电图片的宽度
   int get imgHeight => image.height; // 雷电图片的高度
   final double width, height, widthRatio;
-
-  ThunderParams(this.image, this.width, this.height, this.widthRatio);
 
   // 重置图片的位置信息
   void reset() {
